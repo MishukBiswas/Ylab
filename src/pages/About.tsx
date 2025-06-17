@@ -29,19 +29,6 @@ const About = () => {
 
   useScrollToTop();
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="flex flex-col items-center justify-center space-y-4">
-          <div className="flex items-center justify-center">
-            <NewtonsCradle />
-          </div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
   const achievements = [
     {
       year: "2023",
@@ -176,6 +163,19 @@ const About = () => {
       "@graph": [person, organization]
     });
   }, [piBanner, education, achievements, researchInterests]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="flex flex-col items-center justify-center space-y-4">
+          <div className="flex items-center justify-center">
+            <NewtonsCradle />
+          </div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

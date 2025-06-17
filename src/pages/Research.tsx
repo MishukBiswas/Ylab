@@ -158,18 +158,24 @@ const Research = () => {
       </Helmet>
 
       {/* Header */}
-      <section className="bg-white border-b">
+      <section className="bg-[#003DA5] text-white">
+        {/* UCR Gold line before header */}
+        <div className="h-1 w-full bg-[#FFB81C]"></div>
+        
         <div className="container-max section-padding">
           <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-5xl font-display font-bold text-gray-900 mb-6">
+            <h1 className="text-4xl md:text-5xl font-display font-bold text-white mb-6">
               Research Projects
             </h1>
-            <p className="text-xl text-gray-600 leading-relaxed">
+            <p className="text-xl text-white/90 leading-relaxed">
               Explore our cutting-edge research initiatives in computational science, 
               quantum computing, and interdisciplinary studies.
             </p>
           </div>
         </div>
+
+        {/* UCR Gold line after header */}
+        <div className="h-1 w-full bg-[#FFB81C]"></div>
       </section>
 
       {/* Category Filter */}

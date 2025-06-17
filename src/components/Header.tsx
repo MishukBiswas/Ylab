@@ -51,7 +51,7 @@ const Header = () => {
               ))}
             </nav>
 
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 pr-4">
               <button
                 onClick={() => setIsSearchOpen(true)}
                 className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
@@ -61,16 +61,16 @@ const Header = () => {
 
               <Link
                 to="/login"
-                className="hidden lg:flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="hidden lg:flex items-center space-x-2 px-3 py-1.5 bg-white text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors shadow-sm font-medium pr-4"
               >
-                <LogIn className="h-4 w-4" />
+                <LogIn className="h-3.5 w-3.5" />
                 <span>Login</span>
               </Link>
 
               {/* Mobile menu button */}
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="lg:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors pr-4"
+                className="lg:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
