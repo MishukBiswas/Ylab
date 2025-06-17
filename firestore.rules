@@ -1,0 +1,29 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow public read access to publications
+    match /publications/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Allow public read access to research projects
+    match /research/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Allow public read access to team members
+    match /teams/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Allow public read access to photos
+    match /photos/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+  }
+} 

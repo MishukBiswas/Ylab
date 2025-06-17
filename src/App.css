@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+}
+
+.font-display {
+  font-family: 'Playfair Display', serif;
+}
+
+.hero-gradient {
+  @apply bg-ucr-blue;
+}
+
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #1e3a8a, #3730a3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.btn-primary {
+  @apply text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 shadow-lg;
+  background-color: #3364B7;
+}
+
+.btn-primary:hover {
+  background-color: #003DA5; /* UCR Blue full for hover */
+  @apply shadow-2xl;
+}
+
+.btn-secondary {
+  @apply bg-white hover:bg-gray-50 text-blue-600 border-2 border-blue-600 px-6 py-3 rounded-lg font-medium transition-all duration-200;
+}
+
+.btn-secondary:hover {
+  @apply shadow-2xl;
+}
+
+.section-padding {
+  @apply py-16 px-4 sm:px-6 lg:px-8;
+}
+
+.container-max {
+  @apply max-w-7xl mx-auto;
+}
+
+.animate-fade-in {
+  opacity: 0;
+  animation: fadeIn 0.6s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+.research-timeline {
+  position: relative;
+}
+
+.research-timeline::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(to bottom, #3b82f6, #8b5cf6);
+}
+
+@media (max-width: 768px) {
+  .research-timeline::before {
+    left: 20px;
+  }
+}
+
+.shadow-ucr-blue {
+  box-shadow: 0 8px 24px 0 #003DA580;
+}
