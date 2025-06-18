@@ -11,7 +11,7 @@ import fs from 'fs';
 import { promises as fsPromises } from 'fs';
 import FormData from 'form-data';
 import fetch from 'node-fetch';
-import { db } from './firebase';
+import { db } from './firebase.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

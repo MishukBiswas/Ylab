@@ -533,7 +533,7 @@ const AdminDashboard = () => {
           <tbody className="bg-white divide-y divide-gray-200">
             {publications.map((pub) => (
               <tr key={pub.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{pub.title}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 max-w-xs truncate" title={pub.title}>{pub.title}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {Array.isArray(pub.authors) ? pub.authors.join(', ') : pub.authors}
                 </td>
@@ -900,6 +900,7 @@ const AdminDashboard = () => {
                   let researchBanner2Url = photos.researchBanner2Url || '';
                   let researchBanner3Url = photos.researchBanner3Url || '';
 
+                  // Only upload if a new file is selected, otherwise keep the current (possibly empty) URL
                   if (photos.profileImage) {
                     profileImageUrl = await uploadImage(photos.profileImage);
                   }
@@ -916,7 +917,7 @@ const AdminDashboard = () => {
                     researchBanner3Url = await uploadImage(photos.researchBanner3);
                   }
 
-                  // Save to Firestore
+                  // Save to Firestore, always saving the current state (including empty strings)
                   const photosRef = doc(db, 'photos', 'main');
                   await setDoc(photosRef, {
                     profileImageUrl,
@@ -1053,14 +1054,23 @@ const AdminDashboard = () => {
 
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700">Role</label>
-                  <input
-                    type="text"
+                  <select
                     name="role"
                     value={formData.role || ''}
                     onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                     className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                     required
-                  />
+                  >
+                    <option value="">Select Role</option>
+                    <option value="Principal Investigator">Principal Investigator</option>
+                    <option value="Senior Research Scientist">Senior Research Scientist</option>
+                    <option value="Postdoctoral Researcher">Postdoctoral Researcher</option>
+                    <option value="PhD Student">PhD Student</option>
+                    <option value="Research Assistant">Research Assistant</option>
+                    <option value="Former Postdoc">Former Postdoc</option>
+                    <option value="Former PhD Student">Former PhD Student</option>
+                    <option value="Former Research Assistant">Former Research Assistant</option>
+                  </select>
                 </div>
 
                 <div className="mb-4">
