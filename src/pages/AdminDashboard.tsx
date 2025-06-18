@@ -91,6 +91,48 @@ const AdminDashboard = () => {
 
   const { uploadImage, isUploading } = useImageUpload();
 
+  // Initialize Firebase Auth
+  useEffect(() => {
+    const initializeAuth = async () => {
+      try {
+        setIsAuthenticating(true);
+        const auth = getAuth();
+        
+        // Check if Firebase is initialized
+        if (!auth) {
+          console.error('Firebase Auth not initialized');
+          showToast('Authentication service not available', 'error');
+          navigate('/login');
+          return;
+        }
+
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+          setIsAuthenticating(false);
+          if (!user) {
+            console.log('No authenticated user found, redirecting to login');
+            navigate('/login');
+          } else {
+            console.log('User authenticated:', user.email);
+          }
+        }, (error) => {
+          console.error('Auth state change error:', error);
+          setIsAuthenticating(false);
+          showToast('Authentication error occurred', 'error');
+          navigate('/login');
+        });
+
+        return () => unsubscribe();
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+        setIsAuthenticating(false);
+        showToast('Failed to initialize authentication', 'error');
+        navigate('/login');
+      }
+    };
+
+    initializeAuth();
+  }, [navigate, showToast]);
+
   // Define loadData function outside useEffect
   const loadData = async () => {
     setIsLoading(true);
@@ -123,22 +165,6 @@ const AdminDashboard = () => {
       setIsLoading(false);
     }
   };
-
-  // Check authentication
-  useEffect(() => {
-    const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsAuthenticating(false);
-      if (!user) {
-        console.log('No authenticated user, redirecting to login');
-        navigate('/login');
-      } else {
-        console.log('User authenticated:', user.email);
-      }
-    });
-
-    return () => unsubscribe();
-  }, [navigate]);
 
   // Load data based on active tab
   useEffect(() => {
