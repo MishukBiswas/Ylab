@@ -1,8 +1,8 @@
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { getAuth } from 'firebase/auth';
-import { getAnalytics } from 'firebase/analytics';
+import { getAnalytics, isSupported } from 'firebase/analytics';
 
 const firebaseConfig = {
   apiKey: "AIzaSyC-xg0Nbg0cXS0pitaJhvjfYCuSvuPkS-A",
@@ -15,12 +15,61 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+let app;
+try {
+  // Check if Firebase is already initialized
+  if (getApps().length === 0) {
+    app = initializeApp(firebaseConfig);
+    console.log('Firebase initialized successfully');
+  } else {
+    app = getApp();
+    console.log('Firebase already initialized');
+  }
+} catch (error) {
+  console.error('Error initializing Firebase:', error);
+  throw new Error('Failed to initialize Firebase');
+}
 
-// Initialize services
-export const db = getFirestore(app);
-export const storage = getStorage(app);
-export const auth = getAuth(app);
-export const analytics = getAnalytics(app);
+// Initialize services with error handling
+export const db = (() => {
+  try {
+    return getFirestore(app);
+  } catch (error) {
+    console.error('Error initializing Firestore:', error);
+    throw new Error('Failed to initialize Firestore');
+  }
+})();
+
+export const storage = (() => {
+  try {
+    return getStorage(app);
+  } catch (error) {
+    console.error('Error initializing Storage:', error);
+    throw new Error('Failed to initialize Storage');
+  }
+})();
+
+export const auth = (() => {
+  try {
+    return getAuth(app);
+  } catch (error) {
+    console.error('Error initializing Auth:', error);
+    throw new Error('Failed to initialize Auth');
+  }
+})();
+
+// Initialize analytics only if supported
+export const analytics = (async () => {
+  try {
+    if (await isSupported()) {
+      return getAnalytics(app);
+    }
+    console.log('Analytics not supported in this environment');
+    return null;
+  } catch (error) {
+    console.error('Error initializing Analytics:', error);
+    return null;
+  }
+})();
 
 export default app; 

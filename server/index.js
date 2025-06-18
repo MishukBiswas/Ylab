@@ -31,15 +31,45 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false
+}));
+
+// Configure CORS
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'https://yuelab-70908.web.app',
+  'https://yuelab-70908.firebaseapp.com'
+];
+
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'], // Add both localhost and 127.0.0.1
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV !== 'production') {
+      callback(null, true);
+    } else {
+      console.warn('Blocked by CORS:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 }));
+
 app.use(morgan('combined'));
 app.use(express.json());
+
+// Serve static files from the React app
+const distPath = path.resolve(__dirname, '../dist');
+if (fs.existsSync(distPath)) {
+  console.log('Serving static files from:', distPath);
+  app.use(express.static(distPath));
+}
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -267,6 +297,23 @@ app.delete('/api/delete-image', async (req, res) => {
   }
 });
 
+// Add catch-all route handler for client-side routing
+app.get('*', (req, res) => {
+  // First check if it's an API request
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: 'API endpoint not found' });
+  }
+  
+  // For all other routes, send the index.html
+  const indexPath = path.join(distPath, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).send('Not found');
+  }
+});
+
+// Start server
 app.listen(PORT, () => {
   console.log('=================================');
   console.log(`Server starting on port ${PORT}...`);
@@ -274,6 +321,8 @@ app.listen(PORT, () => {
   console.log('- IMGBB_API_KEY:', process.env.IMGBB_API_KEY ? 'Set' : 'Not set');
   console.log('- PORT:', process.env.PORT || 3001);
   console.log('=================================');
+  console.log(`- Health check: http://localhost:${PORT}/health`);
+  console.log(`- API test: http://localhost:${PORT}/api/test`);
 }).on('error', (error) => {
   console.error('Failed to start server:', error);
   if (error.code === 'EADDRINUSE') {

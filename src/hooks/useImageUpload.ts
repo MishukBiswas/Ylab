@@ -15,6 +15,16 @@ interface UploadResult {
   error?: string;
 }
 
+// Get the base URL based on the environment
+const getBaseUrl = () => {
+  // If running locally
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    return 'http://localhost:3001';
+  }
+  // In production, use the same origin as the client
+  return window.location.origin;
+};
+
 export const useImageUpload = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,16 +46,32 @@ export const useImageUpload = () => {
       const formData = new FormData();
       formData.append('file', file);
 
+      // Get the correct API URL
+      const baseUrl = getBaseUrl();
+      console.log('Using API base URL:', baseUrl);
+
       // Upload to our server
-      const response = await fetch('http://localhost:3001/api/upload', {
+      const response = await fetch(`${baseUrl}/api/upload`, {
         method: 'POST',
-        body: formData
+        body: formData,
+        // Add credentials to handle cookies/auth if needed
+        credentials: 'include'
       });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Upload failed:', {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorText
+        });
+        throw new Error(`Upload failed: ${response.statusText} - ${errorText}`);
+      }
 
       const result: UploadResult = await response.json();
       console.log('Server response:', result);
 
-      if (!response.ok || !result.success) {
+      if (!result.success) {
         throw new Error(result.error || 'Upload failed');
       }
 
@@ -56,8 +82,9 @@ export const useImageUpload = () => {
       return result.data.url;
     } catch (error) {
       console.error('Error in uploadImage:', error);
-      setError(error instanceof Error ? error.message : 'Failed to upload image');
-      throw error;
+      const errorMessage = error instanceof Error ? error.message : 'Failed to upload image';
+      setError(errorMessage);
+      throw new Error(errorMessage);
     } finally {
       setIsUploading(false);
       setUploadProgress(0);
